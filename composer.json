@@ -3,8 +3,10 @@
     "authors": [
         {
             "name": "mass-min",
-            "email": "koyod111@gmail.com"
+            "email": "masumi.sugae@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "electrolinux/phpquery": "^0.9.6"
+    }
 }
