@@ -8,8 +8,9 @@ class Crawler
 
     /**
      * function executed before executing run()
+     * @return void
      */
-    public function beforeAction()
+    protected function beforeAction()
     {
         echo "--- Crawler start ---\n";
         if (!file_exists('tmp')) {
@@ -27,25 +28,37 @@ class Crawler
         self::beforeAction();
 
         $indexPage = file_get_contents(self::INDEX_URL);
-        $filePath = 'tmp/index.html';
-        $file = fopen('tmp/index.html', 'w');
-        fwrite($file, $indexPage);
-        fclose($file);
-        $pageCount = self::getTotalPage($filePath);
-        var_dump($pageCount);
+        $pageCount = self::getTotalPage($indexPage);
+
+        for ($pageIndex = 1; $pageIndex < $pageCount; $pageIndex++) {
+            $indexPage = file_get_contents(self::INDEX_URL . '&page=' . $pageIndex);
+            $file = fopen('tmp/index_' . $pageIndex . '.html', 'w');
+            fwrite($file, $indexPage);
+            fclose($file);
+            sleep(1);
+            echo "progress: " . $pageIndex . '/' . $pageCount . "\n";
+        }
+
         self::afterAction();
     }
 
-    public function getTotalPage($handle)
+    /**
+     * @param $handle
+     * @return int
+     */
+    private function getTotalPage($handle)
     {
-        $domIndexPage = phpQuery::newDocumentFile($handle);
-        return (int)$domIndexPage->find('.pagination-parts > li:last-child a')->text();
+        $domIndexPage = phpQuery::newDocument($handle);
+        $pageCount = (int)$domIndexPage->find('.pagination-parts > li:last-child a')->text();
+        echo 'total page count: ' . $pageCount . "\n";
+        return $pageCount;
     }
 
     /**
      * function executed after executing run()
+     * @return void
      */
-    public function afterAction()
+    protected function afterAction()
     {
         echo "--- Crawler Finish ---\n";
     }
