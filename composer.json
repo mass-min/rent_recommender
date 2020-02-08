@@ -1,0 +1,10 @@
+{
+    "name": "mass-min/rent_recommender",
+    "authors": [
+        {
+            "name": "mass-min",
+            "email": "koyod111@gmail.com"
+        }
+    ],
+    "require": {}
+}
