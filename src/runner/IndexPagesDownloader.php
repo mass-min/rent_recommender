@@ -13,7 +13,7 @@ class IndexPagesDownloader
     {
         $this->beforeAction();
 
-        $crawler = new Crawler();
+        $crawler = new IndexPageCrawler();
         $crawler->execute();
 
         $this->afterAction();
