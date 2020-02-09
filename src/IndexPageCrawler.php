@@ -6,6 +6,7 @@ class IndexPageCrawler
 {
     // 目黒区/賃料が安い順/30件ずつ
     const INDEX_URL = 'https://suumo.jp/jj/chintai/ichiran/FR301FC005/?ar=030&bs=040&ta=13&sc=13110&cb=0.0&ct=9999999&mb=0&mt=9999999&et=9999999&cn=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&sngz=&po2=99&po1=00';
+    const DOWNLOAD_DIR_PATH = 'tmp/indexHtml';
 
     /**
      * @return void
@@ -17,16 +18,16 @@ class IndexPageCrawler
         $pageCount = $this->getTotalPage($indexPage);
 
         // HTMLファイル保存用ディレクトリがなかったら作成
-        if (!file_exists('tmp')) {
+        if (!file_exists(self::DOWNLOAD_DIR_PATH)) {
             echo "There is no tmp directory. Creating it ... ";
-            mkdir('tmp');
+            mkdir(self::DOWNLOAD_DIR_PATH, 0777, true);
             echo "Complete to creating tmp directory.\n";
         }
 
         // 各indexページのhtmlを取得
         for ($pageIndex = 1; $pageIndex <= $pageCount; $pageIndex++) {
             $url = self::INDEX_URL . '&page=' . $pageIndex;
-            $fileName = 'tmp/index_' . $pageIndex . '.html';
+            $fileName = self::DOWNLOAD_DIR_PATH . '/index_' . $pageIndex . '.html';
 
             $pageDownloader = new PageDownloader();
             $pageDownloader->download($url, $fileName);

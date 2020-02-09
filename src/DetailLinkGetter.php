@@ -4,7 +4,7 @@ namespace RentRecommender;
 
 use SplFileObject;
 
-class DetailLinkSearcher
+class DetailLinkGetter
 {
     const INDEX_HTML_DIR = 'tmp/indexHtml';
     const DETAIL_LINK_DIR = 'tmp/detailLinks';
@@ -15,6 +15,13 @@ class DetailLinkSearcher
     public function execute(): void
     {
         $totalCount = count(glob(self::INDEX_HTML_DIR . '/*'));
+
+        // CSVファイル保存用ディレクトリがなかったら作成
+        if (!file_exists(self::DETAIL_LINK_DIR)) {
+            echo "There is no tmp directory. Creating it ... ";
+            mkdir(self::DETAIL_LINK_DIR, 0777, true);
+            echo "Complete to creating tmp directory.\n";
+        }
 
         for ($index = 1; $index <= $totalCount; $index++) {
             $indexHtmlFile = self::INDEX_HTML_DIR . "/index_$index.html";

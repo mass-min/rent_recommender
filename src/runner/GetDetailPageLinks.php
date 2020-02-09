@@ -4,7 +4,7 @@ namespace RentRecommender;
 
 require_once "vendor/autoload.php";
 
-class IndexPagesDownloader
+class GetDetailPageLinks
 {
     /**
      * main function
@@ -13,30 +13,30 @@ class IndexPagesDownloader
     {
         $this->beforeAction();
 
-        $crawler = new IndexPageCrawler();
-        $crawler->execute();
+        $detailLinkGetter = new DetailLinkGetter();
+        $detailLinkGetter->execute();
 
         $this->afterAction();
     }
 
     /**
-     * function executed before executing run()
+     * function executed before running execute()
      * @return void
      */
     protected function beforeAction(): void
     {
-        echo "--- IndexPagesDownloader start ---\n";
+        echo "--- GetDetailPageLinks start ---\n";
     }
 
     /**
-     * function executed after executing run()
+     * function executed after running execute()
      * @return void
      */
     protected function afterAction(): void
     {
-        echo "--- IndexPagesDownloader Finish ---\n";
+        echo "--- GetDetailPageLinks Finish ---\n";
     }
 }
 
-$downloadIndexPages = new IndexPagesDownloader();
-$downloadIndexPages->execute();
+$getDetailPageLinks = new GetDetailPageLinks();
+$getDetailPageLinks->execute();
