@@ -14,7 +14,7 @@ class DetailPageLinksSearcher
         $this->beforeAction();
 
         $detailLinkSearcher = new DetailLinkSearcher();
-        var_dump($detailLinkSearcher->execute('tmp/index_1.html'));
+        $detailLinkSearcher->execute();
 
         $this->afterAction();
     }
