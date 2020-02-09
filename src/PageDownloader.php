@@ -5,15 +5,18 @@ namespace RentRecommender;
 class PageDownloader
 {
     /**
-     * @param $url
-     * @param $fileName
-     * @return void
+     * @param string $url
+     * @param string $fileName
+     * @return bool
      */
-    public function download($url, $fileName): void
+    public function download(string $url, string $fileName): bool
     {
         $indexPage = file_get_contents($url);
-        $file = fopen($fileName, 'w');
-        fwrite($file, $indexPage);
-        fclose($file);
+        if ($indexPage) {
+            $file = fopen($fileName, 'w');
+            fwrite($file, $indexPage);
+            fclose($file);
+        }
+        return (bool)$indexPage;
     }
 }
