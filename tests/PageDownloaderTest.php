@@ -7,7 +7,7 @@ use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
 use RentRecommender\PageDownloader;
 
-class PageDownloderTest extends TestCase
+class PageDownloaderTest extends TestCase
 {
     const TEST_DIR_NAME = 'tests';
     const TMP_DIR_NAME = 'tmp';
@@ -80,7 +80,7 @@ class PageDownloderTest extends TestCase
      * @test
      * 引数の型が異なる場合にエラーになることを確認
      */
-    public function testDownloadFailsWhenGotWrongtTypeArgumen()
+    public function testDownloadFailsWhenGotWrongTypeArgument()
     {
         $tmpDirPath = self::getTmpDirPath();
 
