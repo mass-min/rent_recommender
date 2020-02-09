@@ -63,45 +63,13 @@ class PageDownloaderTest extends TestCase
         // DL先のtmpディレクトリの中に、ファイルが何もないことを確認
         $this->assertSame([], glob($tmpDirPath . '/*'));
 
-        // 存在しないファイルをダウンロードしようとすると例外が投げられることを確認
+        // 存在しないファイルをダウンロードしようとするとfalseが返ることを確認
         $downloadedFileName = $tmpDirPath . '/test2.html';
         $pageDownloader = new PageDownloader();
         $this->assertFalse(
             @$pageDownloader->download(
                 self::TEST_DIR_NAME . '/' . self::FIXTURE_DIR_NAME . '/not_exist.html',
                 $downloadedFileName
-            )
-        );
-        // ファイルも作成されていないことを確認
-        $this->assertFalse(file_exists($downloadedFileName));
-    }
-
-    /**
-     * @test
-     * 引数の型が異なる場合にエラーになることを確認
-     */
-    public function testDownloadFailsWhenGotWrongTypeArgument()
-    {
-        $tmpDirPath = self::getTmpDirPath();
-
-        // DL先のtmpディレクトリの中に、ファイルが何もないことを確認
-        $this->assertSame([], glob($tmpDirPath . '/*'));
-
-        // 存在しないファイルをダウンロードしようとすると例外が投げられることを確認
-        $downloadedFileName = $tmpDirPath . 'test3.html';
-        $targetFileName = self::TEST_DIR_NAME . '/' . self::FIXTURE_DIR_NAME . '/not_exist.html';
-
-        $pageDownloader = new PageDownloader();
-        $this->assertFalse(
-            @$pageDownloader->download(
-                1,
-                $downloadedFileName
-            )
-        );
-        $this->assertFalse(
-            @$pageDownloader->download(
-                $targetFileName,
-                1
             )
         );
         // ファイルも作成されていないことを確認
