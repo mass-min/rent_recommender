@@ -3,6 +3,7 @@
 namespace RentRecommender;
 
 use SplFileObject;
+use DOMWrap\Document;
 
 class DetailLinkGetter
 {
@@ -24,28 +25,30 @@ class DetailLinkGetter
         }
 
         for ($index = 1; $index <= $totalCount; $index++) {
-            $indexHtmlFile = self::INDEX_HTML_DIR . "/index_$index.html";
-            $detailLinks = $this->getDetailLinks($indexHtmlFile);
+            $indexHtmlFilePath = self::INDEX_HTML_DIR . "/index_$index.html";
+            $detailLinks = $this->getDetailLinks($indexHtmlFilePath);
 
-            $csvFileName = self::DETAIL_LINK_DIR . "/detail_$index.csv";
-            $this->createDetailLinkCsv($detailLinks, $csvFileName);
+            $csvFilePath = self::DETAIL_LINK_DIR . "/detail_$index.csv";
+            $this->createDetailLinkCsv($detailLinks, $csvFilePath);
 
             echo "progress: " . $index . '/' . $totalCount . "\n";
         }
     }
 
     /**
-     * @param string $indexHtmlFileName
+     * @param string $indexHtmlFilePath
      * @return array
      */
-    private function getDetailLinks(string $indexHtmlFileName): array
+    private function getDetailLinks(string $indexHtmlFilePath): array
     {
-        $domIndexPage = \phpQuery::newDocumentFileHTML($indexHtmlFileName);
-        $detailLinkElements = $domIndexPage->find('.property_inner-title');
+        $indexHtml = file_get_contents($indexHtmlFilePath);
+        $doc = new Document();
+        $doc->html($indexHtml);
+        $detailLinkElements = $doc->find('.property_inner-title');
 
         $detailLinks = [];
         foreach ($detailLinkElements as $detailLinkElement) {
-            $detailLinks[] = pq($detailLinkElement)->find('a')->attr('href');
+            $detailLinks[] = $detailLinkElement->find('a')->attr('href');
         }
 
         return $detailLinks;
@@ -53,11 +56,11 @@ class DetailLinkGetter
 
     /**
      * @param array $detailLinks
-     * @param string $csvFileName
+     * @param string $csvFilePath
      */
-    private function createDetailLinkCsv($detailLinks, $csvFileName): void
+    private function createDetailLinkCsv($detailLinks, $csvFilePath): void
     {
-        $csvFile = new SplFileObject($csvFileName, 'w');
+        $csvFile = new SplFileObject($csvFilePath, 'w');
         $csvFile->fputcsv(['path']);
 
         foreach ($detailLinks as $detailLink) {

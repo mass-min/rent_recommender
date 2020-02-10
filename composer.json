@@ -7,7 +7,7 @@
         }
     ],
     "require": {
-        "electrolinux/phpquery": "^0.9.6"
+        "scotteh/php-dom-wrapper": "^1.2"
     },
     "autoload": {
         "psr-4": {

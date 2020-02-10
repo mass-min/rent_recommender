@@ -2,6 +2,8 @@
 
 namespace RentRecommender;
 
+use DOMWrap\Document;
+
 class IndexPageCrawler
 {
     // 目黒区/賃料が安い順/30件ずつ
@@ -27,10 +29,10 @@ class IndexPageCrawler
         // 各indexページのhtmlを取得
         for ($pageIndex = 1; $pageIndex <= $pageCount; $pageIndex++) {
             $url = self::INDEX_URL . '&page=' . $pageIndex;
-            $fileName = self::DOWNLOAD_DIR_PATH . '/index_' . $pageIndex . '.html';
+            $filePath = self::DOWNLOAD_DIR_PATH . '/index_' . $pageIndex . '.html';
 
             $pageDownloader = new PageDownloader();
-            $pageDownloader->download($url, $fileName);
+            $pageDownloader->download($url, $filePath);
 
             sleep(1);
             echo "progress: " . $pageIndex . '/' . $pageCount . "\n";
@@ -38,15 +40,16 @@ class IndexPageCrawler
     }
 
     /**
-     * @param $handle
+     * @param $indexPageHtml
      * @return int
      */
-    private function getTotalPage($handle): int
+    private function getTotalPage($indexPageHtml): int
     {
         // ページネーションの最後の数字から総ページ数を取得
-        $domIndexPage = \phpQuery::newDocument($handle);
-        $pageCount = (int)$domIndexPage->find('.pagination-parts > li:last-child a')->text();
+        $doc = new Document();
+        $doc->html($indexPageHtml);
+        $pageCount = $doc->find('.pagination-parts > li:last-child a')->text();
         echo 'total page count: ' . $pageCount . "\n";
-        return $pageCount;
+        return (int)$pageCount;
     }
 }
