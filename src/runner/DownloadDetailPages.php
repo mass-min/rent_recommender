@@ -14,9 +14,9 @@ class DownloadDetailPages
     {
         $this->beforeAction();
 
-        $csvFileName = 'tmp/detailLinks/detail_1.csv';
+        $csvFilePath = 'tmp/detailLinks/detail_1.csv';
         $downloader = new DetailPageDownloader();
-        $downloader->execute($csvFileName);
+        $downloader->execute($csvFilePath);
 
         $this->afterAction();
     }

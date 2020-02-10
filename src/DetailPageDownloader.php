@@ -32,10 +32,10 @@ class DetailPageDownloader
 
         foreach ($csvFile as $index => $line) {
             $url = self::SUUMO_BASE_URL . $line[0];
-            $fileName = self::DOWNLOAD_DIR_PATH . '/detail_' . $index . '.html';
+            $filePath = self::DOWNLOAD_DIR_PATH . '/detail_' . $index . '.html';
 
             $pageDownloader = new PageDownloader();
-            $pageDownloader->download($url, $fileName);
+            $pageDownloader->download($url, $filePath);
 
             sleep(1);
             echo "progress: " . ($index + 1) . '/' . $totalCount . "\n";
