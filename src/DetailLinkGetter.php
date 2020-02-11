@@ -2,8 +2,9 @@
 
 namespace RentRecommender;
 
+use RentRecommender\Utility\DirectoryOperator;
+use RentRecommender\Utility\DocumentInitializer;
 use SplFileObject;
-use DOMWrap\Document;
 
 class DetailLinkGetter
 {
@@ -15,14 +16,10 @@ class DetailLinkGetter
      */
     public function execute(): void
     {
-        $totalCount = count(glob(self::INDEX_HTML_DIR . '/*'));
-
         // CSVファイル保存用ディレクトリがなかったら作成
-        if (!file_exists(self::DETAIL_LINK_DIR)) {
-            echo "There is no tmp directory. Creating it ... ";
-            mkdir(self::DETAIL_LINK_DIR, 0777, true);
-            echo "Complete to creating tmp directory.\n";
-        }
+        DirectoryOperator::findOrCreate(self::DETAIL_LINK_DIR);
+
+        $totalCount = count(glob(self::INDEX_HTML_DIR . '/*'));
 
         for ($index = 1; $index <= $totalCount; $index++) {
             $indexHtmlFilePath = self::INDEX_HTML_DIR . "/index_$index.html";
@@ -41,30 +38,30 @@ class DetailLinkGetter
      */
     private function getDetailLinks(string $indexHtmlFilePath): array
     {
-        $indexHtml = file_get_contents($indexHtmlFilePath);
-        $doc = new Document();
-        $doc->html($indexHtml);
+        $doc = DocumentInitializer::createDocumentWithHtml($indexHtmlFilePath);
         $detailLinkElements = $doc->find('.property_inner-title');
 
         $detailLinks = [];
         foreach ($detailLinkElements as $detailLinkElement) {
-            $detailLinks[] = $detailLinkElement->find('a')->attr('href');
+            $title = trim($detailLinkElement->nodeValue);
+            $path = $detailLinkElement->lastChild->attr('href');
+            $detailLinks[$title] = $path;
         }
 
         return $detailLinks;
     }
 
     /**
-     * @param array $detailLinks
+     * @param array $detailPages
      * @param string $csvFilePath
      */
-    private function createDetailLinkCsv($detailLinks, $csvFilePath): void
+    private function createDetailLinkCsv($detailPages, $csvFilePath): void
     {
         $csvFile = new SplFileObject($csvFilePath, 'w');
-        $csvFile->fputcsv(['path']);
+        $csvFile->fputcsv(['title', 'path']);
 
-        foreach ($detailLinks as $detailLink) {
-            $csvFile->fputcsv([$detailLink]);
+        foreach ($detailPages as $title => $path) {
+            $csvFile->fputcsv([$title, $path]);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace RentRecommender;
 
-use DOMWrap\Document;
+use RentRecommender\Utility\DocumentInitializer;
 
 require_once "vendor/autoload.php";
 
@@ -14,27 +14,15 @@ class DetailPageScraper
      */
     public function execute(string $detailHtmlFilePath): void
     {
-        $doc = $this->initializeDocumentWithHtml($detailHtmlFilePath);
+        $doc = DocumentInitializer::createDocumentWithHtml($detailHtmlFilePath);
         $data = [];
         $targets = self::scrapingTargets();
 
         foreach ($targets as $property => $selector) {
+            var_dump($doc->find($selector));
             $data[$property] = trim($doc->find($selector)->text());
         }
         var_dump($data);
-    }
-
-    /**
-     * @param string $htmlFilePath
-     * @return Document
-     */
-    public function initializeDocumentWithHtml(string $htmlFilePath): Document
-    {
-        $html = file_get_contents($htmlFilePath);
-        $doc = new Document();
-        $doc->html($html);
-
-        return $doc;
     }
 
     /**

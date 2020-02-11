@@ -2,7 +2,9 @@
 
 namespace RentRecommender;
 
-use DOMWrap\Document;
+use RentRecommender\Utility\DirectoryOperator;
+use RentRecommender\Utility\DocumentInitializer;
+use RentRecommender\Utility\HtmlDownloader;
 
 class IndexPageCrawler
 {
@@ -15,24 +17,18 @@ class IndexPageCrawler
      */
     public function execute(): void
     {
-        // indexページの総ページ数取得
-        $indexPage = file_get_contents(self::INDEX_URL);
-        $pageCount = $this->getTotalPage($indexPage);
-
         // HTMLファイル保存用ディレクトリがなかったら作成
-        if (!file_exists(self::DOWNLOAD_DIR_PATH)) {
-            echo "There is no tmp directory. Creating it ... ";
-            mkdir(self::DOWNLOAD_DIR_PATH, 0777, true);
-            echo "Complete to creating tmp directory.\n";
-        }
+        DirectoryOperator::findOrCreate(self::DOWNLOAD_DIR_PATH);
+
+        // indexページの総ページ数取得
+        $pageCount = $this->getTotalPage(self::INDEX_URL);
 
         // 各indexページのhtmlを取得
         for ($pageIndex = 1; $pageIndex <= $pageCount; $pageIndex++) {
             $url = self::INDEX_URL . '&page=' . $pageIndex;
             $filePath = self::DOWNLOAD_DIR_PATH . '/index_' . $pageIndex . '.html';
 
-            $pageDownloader = new PageDownloader();
-            $pageDownloader->download($url, $filePath);
+            HtmlDownloader::download($url, $filePath);
 
             sleep(1);
             echo "progress: " . $pageIndex . '/' . $pageCount . "\n";
@@ -40,16 +36,16 @@ class IndexPageCrawler
     }
 
     /**
-     * @param $indexPageHtml
+     * @param string $indexHtmlUrl
      * @return int
      */
-    private function getTotalPage($indexPageHtml): int
+    private function getTotalPage(string $indexHtmlUrl): int
     {
         // ページネーションの最後の数字から総ページ数を取得
-        $doc = new Document();
-        $doc->html($indexPageHtml);
+        $doc = DocumentInitializer::createDocumentWithHtml($indexHtmlUrl);
         $pageCount = $doc->find('.pagination-parts > li:last-child a')->text();
         echo 'total page count: ' . $pageCount . "\n";
+
         return (int)$pageCount;
     }
 }
