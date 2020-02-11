@@ -5,7 +5,7 @@ use org\bovigo\vfs\vfsStreamException;
 use org\bovigo\vfs\vfsStreamWrapper;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
-use RentRecommender\PageDownloader;
+use RentRecommender\Utility\HtmlDownloader;
 
 class PageDownloaderTest extends TestCase
 {
@@ -43,9 +43,8 @@ class PageDownloaderTest extends TestCase
 
         // download()でファイルがDLされることを確認
         $downloadedFileName = $tmpDirPath . '/test.html';
-        $pageDownloader = new PageDownloader();
         $this->assertTrue(
-            $pageDownloader->download(
+            HtmlDownloader::download(
                 self::TEST_DIR_NAME . '/' . self::FIXTURE_DIR_NAME . '/sample.html',
                 $downloadedFileName
             )
@@ -65,9 +64,8 @@ class PageDownloaderTest extends TestCase
 
         // 存在しないファイルをダウンロードしようとするとfalseが返ることを確認
         $downloadedFileName = $tmpDirPath . '/test2.html';
-        $pageDownloader = new PageDownloader();
         $this->assertFalse(
-            @$pageDownloader->download(
+            @HtmlDownloader::download(
                 self::TEST_DIR_NAME . '/' . self::FIXTURE_DIR_NAME . '/not_exist.html',
                 $downloadedFileName
             )
