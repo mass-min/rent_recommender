@@ -2,12 +2,17 @@
 
 namespace RentRecommender;
 
+use RentRecommender\Utility\DirectoryOperator;
 use RentRecommender\Utility\DocumentInitializer;
+use SplFileObject;
 
 require_once "vendor/autoload.php";
 
 class DetailPageScraper
 {
+    const DETAIL_DATA_DIR = 'tmp/detailData';
+    const CSV_FILE_PATH = 'tmp/detailData/rent.csv';
+
     /**
      * @param string $detailHtmlFilePath
      * @return void
@@ -21,7 +26,25 @@ class DetailPageScraper
         foreach ($targets as $property => $selector) {
             $data[$property] = trim($doc->find($selector)->text());
         }
-        var_dump($data);
+
+        // CSVファイル保存用ディレクトリがなかったら作成
+        DirectoryOperator::findOrCreate(self::DETAIL_DATA_DIR);
+        // 詳細ページのスクレイピング結果をCSVに吐き出し
+        $this->createDetailDataCsv($data, self::CSV_FILE_PATH);
+    }
+
+    /**
+     * @param array $detailData
+     * @param string $csvFilePath
+     */
+    private function createDetailDataCsv($detailData, $csvFilePath): void
+    {
+        $csvFile = new SplFileObject($csvFilePath, 'a+');
+        $csvFile->seek(PHP_INT_MAX);
+        if ($csvFile->key() == 0) {
+            $csvFile->fputcsv(array_keys($detailData));
+        }
+        $csvFile->fputcsv(array_values($detailData));
     }
 
     /**
