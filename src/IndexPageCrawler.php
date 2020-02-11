@@ -25,11 +25,7 @@ class IndexPageCrawler
 
         // 各indexページのhtmlを取得
         for ($pageIndex = 1; $pageIndex <= $pageCount; $pageIndex++) {
-            $url = self::INDEX_URL . '&page=' . $pageIndex;
-            $filePath = self::DOWNLOAD_DIR_PATH . '/index_' . $pageIndex . '.html';
-
-            HtmlDownloader::download($url, $filePath);
-
+            $this->downloadIndexHtml($pageIndex);
             sleep(1);
             echo "progress: " . $pageIndex . '/' . $pageCount . "\n";
         }
@@ -47,5 +43,16 @@ class IndexPageCrawler
         echo 'total page count: ' . $pageCount . "\n";
 
         return (int)$pageCount;
+    }
+
+    /**
+     * @param $pageIndex
+     * @return void
+     */
+    private function downloadIndexHtml($pageIndex): void
+    {
+        $url = self::INDEX_URL . '&page=' . $pageIndex;
+        $filePath = self::DOWNLOAD_DIR_PATH . '/index_' . $pageIndex . '.html';
+        HtmlDownloader::download($url, $filePath);
     }
 }

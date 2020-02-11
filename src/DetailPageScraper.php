@@ -19,7 +19,6 @@ class DetailPageScraper
         $targets = self::scrapingTargets();
 
         foreach ($targets as $property => $selector) {
-            var_dump($doc->find($selector));
             $data[$property] = trim($doc->find($selector)->text());
         }
         var_dump($data);
@@ -46,6 +45,3 @@ class DetailPageScraper
         ];
     }
 }
-
-$detailPageScraper = new DetailPageScraper();
-$detailPageScraper->execute('tmp/detailHtml/detail_1.html');
