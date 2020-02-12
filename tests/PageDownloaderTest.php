@@ -5,6 +5,7 @@ use org\bovigo\vfs\vfsStreamException;
 use org\bovigo\vfs\vfsStreamWrapper;
 use org\bovigo\vfs\vfsStreamDirectory;
 use PHPUnit\Framework\TestCase;
+use RentRecommender\Utility\DocumentInitializer;
 use RentRecommender\Utility\HtmlDownloader;
 
 class PageDownloaderTest extends TestCase
@@ -12,6 +13,8 @@ class PageDownloaderTest extends TestCase
     const TEST_DIR_NAME = 'tests';
     const TMP_DIR_NAME = 'tmp';
     const FIXTURE_DIR_NAME = 'fixtures';
+
+    private $tmpDirPath;
 
     /**
      * @throws vfsStreamException
@@ -23,10 +26,17 @@ class PageDownloaderTest extends TestCase
         vfsStreamWrapper::getRoot()->addChild(vfsStream::newDirectory(self::TMP_DIR_NAME));
     }
 
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $this->tmpDirPath = self::getTmpDirPath();
+    }
+
     /**
      * @return string
      */
-    public static function getTmpDirPath() {
+    public static function getTmpDirPath(): string
+    {
         $originalTmpDirPath = self::TEST_DIR_NAME . '/' . self::TMP_DIR_NAME;
         return vfsStream::url($originalTmpDirPath);
     }
@@ -37,19 +47,22 @@ class PageDownloaderTest extends TestCase
      */
     public function testDownload()
     {
-        $tmpDirPath = self::getTmpDirPath();
         // DL先のtmpディレクトリの中に、ファイルが何もないことを確認
-        $this->assertSame([], glob($tmpDirPath . '/*'));
+        $this->assertSame([], glob($this->tmpDirPath . '/*'));
 
         // download()でファイルがDLされることを確認
-        $downloadedFileName = $tmpDirPath . '/test.html';
+        $downloadedFilePath = $this->tmpDirPath . '/test.html';
         $this->assertTrue(
             HtmlDownloader::download(
                 self::TEST_DIR_NAME . '/' . self::FIXTURE_DIR_NAME . '/sample.html',
-                $downloadedFileName
+                $downloadedFilePath
             )
         );
-        $this->assertTrue(file_exists($downloadedFileName));
+        $this->assertTrue(file_exists($downloadedFilePath));
+
+        $doc = DocumentInitializer::createDocumentWithHtml($downloadedFilePath);
+
+        $this->assertSame('sample.html', $doc->find('h1')->text());
     }
 
     /**
@@ -58,19 +71,18 @@ class PageDownloaderTest extends TestCase
      */
     public function testDownloadFailsWhenTargetFileNotExists()
     {
-        $tmpDirPath = self::getTmpDirPath();
         // DL先のtmpディレクトリの中に、ファイルが何もないことを確認
-        $this->assertSame([], glob($tmpDirPath . '/*'));
+        $this->assertSame([], glob($this->tmpDirPath . '/*'));
 
         // 存在しないファイルをダウンロードしようとするとfalseが返ることを確認
-        $downloadedFileName = $tmpDirPath . '/test2.html';
+        $downloadedFilePath = $this->tmpDirPath . '/test2.html';
         $this->assertFalse(
             @HtmlDownloader::download(
                 self::TEST_DIR_NAME . '/' . self::FIXTURE_DIR_NAME . '/not_exist.html',
-                $downloadedFileName
+                $downloadedFilePath
             )
         );
         // ファイルも作成されていないことを確認
-        $this->assertFalse(file_exists($downloadedFileName));
+        $this->assertFalse(file_exists($downloadedFilePath));
     }
 }
