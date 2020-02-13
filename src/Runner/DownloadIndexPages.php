@@ -15,7 +15,7 @@ class DownloadIndexPages extends RunnerBase
     public function execute(array $argv): void
     {
         $date = date($argv[1]) ?: date('Y-m-d');
-        (new IndexPageCrawler())->execute($date);
+        (new IndexPageCrawler($date))->execute();
     }
 }
 

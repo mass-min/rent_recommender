@@ -14,8 +14,8 @@ class DownloadDetailPages extends RunnerBase
      */
     public function execute(array $argv): void
     {
-        $csvFilePath = 'tmp/detailLinks/detail_1.csv';
-        (new DetailPageDownloader())->execute($csvFilePath);
+        $date = date($argv[1]) ?: date('Y-m-d');
+        (new DetailPageDownloader($date))->execute();
     }
 }
 

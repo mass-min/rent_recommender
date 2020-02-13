@@ -8,20 +8,27 @@ use SplFileObject;
 
 class DetailPageDownloader
 {
-    const DOWNLOAD_DIR_PATH = 'tmp/detailHtml';
     const SUUMO_BASE_URL = 'https://suumo.jp';
 
+    private $detailLinksCsvFilePath;
+    private $detailPageHtmlDirPath;
+
+    public function __construct($date)
+    {
+        $this->detailLinksCsvFilePath = DirectoryOperator::getDetailCsvDirPath($date) . '/detailLink.csv';
+        $this->detailPageHtmlDirPath = DirectoryOperator::getDetailHtmlDirPath($date);
+    }
+
     /**
-     * @param string $DetailLinksCsvFileName
      * @return void
      */
-    public function execute(string $DetailLinksCsvFileName): void
+    public function execute(): void
     {
-        $csvFile = new SplFileObject($DetailLinksCsvFileName, 'r');
+        $csvFile = new SplFileObject($this->detailLinksCsvFilePath, 'r');
         $csvFile->setFlags(SplFileObject::READ_CSV);
 
         // HTMLファイル保存用ディレクトリがなかったら作成
-        DirectoryOperator::findOrCreate(self::DOWNLOAD_DIR_PATH);
+        DirectoryOperator::findOrCreate($this->detailPageHtmlDirPath);
 
         // CSVファイルの総行数を取得
         $csvFile->seek(PHP_INT_MAX);
@@ -44,7 +51,7 @@ class DetailPageDownloader
     public function downloadDetailHtml(string $path, int $pageIndex): void
     {
         $url = self::SUUMO_BASE_URL . $path;
-        $filePath = self::DOWNLOAD_DIR_PATH . '/detail_' . $pageIndex . '.html';
+        $filePath = $this->detailPageHtmlDirPath . '/detail_' . $pageIndex . '.html';
 
         HtmlDownloader::download($url, $filePath);
     }

@@ -11,10 +11,11 @@ class IndexPageCrawler
     // 目黒区/賃料が安い順/30件ずつ
     const INDEX_URL = 'https://suumo.jp/jj/chintai/ichiran/FR301FC005/?ar=030&bs=040&ta=13&sc=13110&cb=0.0&ct=9999999&mb=0&mt=9999999&et=9999999&cn=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&sngz=&po2=99&po1=00';
 
-    private $downloadDirPath;
+    private $indexHtmlDirPath;
 
     /**
      * IndexPageCrawler constructor.
+     * @param $date
      */
     public function __construct($date)
     {
