@@ -10,11 +10,14 @@ class GetDetailPageLinks extends RunnerBase
 {
     /**
      * download detail page links csv
+     * @param array $argv
      */
-    public function execute(): void
+    public function execute(array $argv): void
     {
-        (new DetailLinkGetter())->execute();
+        $date = date($argv[1]) ?: date('Y-m-d');
+        (new DetailLinkGetter($date))->execute();
     }
 }
 
-(new GetDetailPageLinks())->execute();
+// php src/Runner/GetDetailPageLinks.php `date "+%Y-%m-%d"`
+(new GetDetailPageLinks())->execute($argv);

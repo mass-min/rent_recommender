@@ -10,8 +10,9 @@ class ScrapeDetailPages extends RunnerBase
 {
     /**
      * scrape detail page html
+     * @param array $argv
      */
-    public function execute(): void
+    public function execute(array $argv): void
     {
         $detailHtmlDirPath = 'tmp/detailHtml';
         $detailHtmlPaths = glob($detailHtmlDirPath . '/*');
@@ -21,4 +22,4 @@ class ScrapeDetailPages extends RunnerBase
     }
 }
 
-(new ScrapeDetailPages())->execute();
+(new ScrapeDetailPages())->execute($argv);

@@ -22,8 +22,9 @@ class RunnerBase implements RunnerInterface
 
     /**
      * execute runner
+     * @param array $args
      */
-    public function execute(): void
+    public function execute(array $args): void
     {
         echo "...running...\n";
     }
