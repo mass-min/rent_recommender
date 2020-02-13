@@ -13,7 +13,7 @@ class DetailLinkGetter
 
     public function __construct(string $date)
     {
-        $this->detailLinkCsvDirPath = DirectoryOperator::getDetailCsvDirPath($date);
+        $this->detailLinkCsvDirPath = DirectoryOperator::getDetailLinksCsvDirPath($date);
         $this->indexHtmlDirPath = DirectoryOperator::getIndexHtmlDirPath($date);
     }
 

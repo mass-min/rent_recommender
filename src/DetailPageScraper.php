@@ -8,27 +8,39 @@ use SplFileObject;
 
 class DetailPageScraper
 {
-    const DETAIL_DATA_DIR = 'tmp/detailData';
-    const CSV_FILE_PATH = 'tmp/detailData/rent.csv';
+    private $detailPageHtmlDirPath;
+    private $detailDataDirPath;
+
+    public function __construct($date)
+    {
+        $this->detailPageHtmlDirPath = DirectoryOperator::getDetailHtmlDirPath($date);
+        $this->detailDataDirPath = DirectoryOperator::getDetailDataCsvDirPath($date);
+    }
 
     /**
-     * @param string $detailHtmlFilePath
      * @return void
      */
-    public function execute(string $detailHtmlFilePath): void
+    public function execute(): void
     {
-        $doc = DocumentInitializer::createDocumentWithHtml($detailHtmlFilePath);
-        $data = [];
-        $targets = self::scrapingTargets();
+        $detailHtmlPaths = glob($this->detailPageHtmlDirPath . '/*');
 
-        foreach ($targets as $property => $selector) {
-            $data[$property] = trim($doc->find($selector)->text());
+        foreach ($detailHtmlPaths as $index => $detailHtmlPath) {
+            $doc = DocumentInitializer::createDocumentWithHtml($detailHtmlPath);
+            $data = [];
+            $targets = self::scrapingTargets();
+
+            foreach ($targets as $property => $selector) {
+                $data[$property] = trim($doc->find($selector)->text());
+            }
+
+            // CSVファイル保存用ディレクトリがなかったら作成
+            DirectoryOperator::findOrCreate($this->detailDataDirPath);
+            // 詳細ページのスクレイピング結果をCSVに吐き出し
+            $csvPath = $this->detailDataDirPath . '/data.csv';
+            $this->addDetailDataToCsv($data, $csvPath);
+
+            echo "progress: " . $index . '/' . count($detailHtmlPaths) . "\n";
         }
-
-        // CSVファイル保存用ディレクトリがなかったら作成
-        DirectoryOperator::findOrCreate(self::DETAIL_DATA_DIR);
-        // 詳細ページのスクレイピング結果をCSVに吐き出し
-        $this->addDetailDataToCsv($data, self::CSV_FILE_PATH);
     }
 
     /**

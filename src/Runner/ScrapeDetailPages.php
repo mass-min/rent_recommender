@@ -14,11 +14,8 @@ class ScrapeDetailPages extends RunnerBase
      */
     public function execute(array $argv): void
     {
-        $detailHtmlDirPath = 'tmp/detailHtml';
-        $detailHtmlPaths = glob($detailHtmlDirPath . '/*');
-        foreach ($detailHtmlPaths as $detailHtmlPath) {
-            (new DetailPageScraper())->execute($detailHtmlPath);
-        }
+        $date = isset($argv[1]) ? date($argv[1]) : date('Y-m-d');
+        (new DetailPageScraper($date))->execute();
     }
 }
 

@@ -44,9 +44,18 @@ class DirectoryOperator
      * @param string $date
      * @return string
      */
-    public static function getDetailCsvDirPath(string $date): string
+    public static function getDetailLinksCsvDirPath(string $date): string
     {
         return self::TMP_DIR_PATH . '/detailLinks/' . self::getDateDirPath($date);
+    }
+
+    /**
+     * @param string $date
+     * @return string
+     */
+    public static function getDetailDataCsvDirPath(string $date): string
+    {
+        return self::TMP_DIR_PATH . '/detailData/' . self::getDateDirPath($date);
     }
 
     /**
