@@ -15,7 +15,7 @@ class DetailPageDownloader
 
     public function __construct($date)
     {
-        $this->detailLinksCsvFilePath = DirectoryOperator::getDetailCsvDirPath($date) . '/detailLink.csv';
+        $this->detailLinksCsvFilePath = DirectoryOperator::getDetailLinksCsvDirPath($date) . '/detailLink.csv';
         $this->detailPageHtmlDirPath = DirectoryOperator::getDetailHtmlDirPath($date);
     }
 
