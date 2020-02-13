@@ -8,8 +8,14 @@ use SplFileObject;
 
 class DetailLinkGetter
 {
-    const INDEX_HTML_DIR = 'tmp/indexHtml';
-    const DETAIL_LINK_DIR = 'tmp/detailLinks';
+    private $detailLinkCsvDirPath;
+    private $indexHtmlDirPath;
+
+    public function __construct(string $date)
+    {
+        $this->detailLinkCsvDirPath = DirectoryOperator::getDetailCsvDirPath($date);
+        $this->indexHtmlDirPath = DirectoryOperator::getIndexHtmlDirPath($date);
+    }
 
     /**
      * @return void
@@ -17,16 +23,16 @@ class DetailLinkGetter
     public function execute(): void
     {
         // CSVファイル保存用ディレクトリがなかったら作成
-        DirectoryOperator::findOrCreate(self::DETAIL_LINK_DIR);
+        DirectoryOperator::findOrCreate($this->detailLinkCsvDirPath);
 
-        $totalCount = count(glob(self::INDEX_HTML_DIR . '/*'));
+        $totalCount = count(glob($this->indexHtmlDirPath . '/*'));
 
         for ($index = 1; $index <= $totalCount; $index++) {
-            $indexHtmlFilePath = self::INDEX_HTML_DIR . "/index_$index.html";
+            $indexHtmlFilePath = $this->indexHtmlDirPath . "/index_$index.html";
             $detailLinks = $this->getDetailLinks($indexHtmlFilePath);
 
-            $csvFilePath = self::DETAIL_LINK_DIR . "/detail_$index.csv";
-            $this->createDetailLinkCsv($detailLinks, $csvFilePath);
+            $csvFilePath = $this->detailLinkCsvDirPath . "/detailLink.csv";
+            $this->addDetailLinkToCsv($detailLinks, $csvFilePath);
 
             echo "progress: " . $index . '/' . $totalCount . "\n";
         }
@@ -55,11 +61,13 @@ class DetailLinkGetter
      * @param array $detailPages
      * @param string $csvFilePath
      */
-    private function createDetailLinkCsv($detailPages, $csvFilePath): void
+    private function addDetailLinkToCsv($detailPages, $csvFilePath): void
     {
-        $csvFile = new SplFileObject($csvFilePath, 'w');
-        $csvFile->fputcsv(['title', 'path']);
-
+        $csvFile = new SplFileObject($csvFilePath, 'a+');
+        $csvFile->seek(PHP_INT_MAX);
+        if ($csvFile->key() == 0) {
+            $csvFile->fputcsv(['name', 'path']);
+        }
         foreach ($detailPages as $title => $path) {
             $csvFile->fputcsv([$title, $path]);
         }

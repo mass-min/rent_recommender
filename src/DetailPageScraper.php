@@ -6,8 +6,6 @@ use RentRecommender\Utility\DirectoryOperator;
 use RentRecommender\Utility\DocumentInitializer;
 use SplFileObject;
 
-require_once "vendor/autoload.php";
-
 class DetailPageScraper
 {
     const DETAIL_DATA_DIR = 'tmp/detailData';
@@ -30,14 +28,14 @@ class DetailPageScraper
         // CSVファイル保存用ディレクトリがなかったら作成
         DirectoryOperator::findOrCreate(self::DETAIL_DATA_DIR);
         // 詳細ページのスクレイピング結果をCSVに吐き出し
-        $this->createDetailDataCsv($data, self::CSV_FILE_PATH);
+        $this->addDetailDataToCsv($data, self::CSV_FILE_PATH);
     }
 
     /**
      * @param array $detailData
      * @param string $csvFilePath
      */
-    private function createDetailDataCsv($detailData, $csvFilePath): void
+    private function addDetailDataToCsv($detailData, $csvFilePath): void
     {
         $csvFile = new SplFileObject($csvFilePath, 'a+');
         $csvFile->seek(PHP_INT_MAX);
