@@ -23,6 +23,19 @@ class DirectoryOperator
     }
 
     /**
+     * @param string $path
+     * @return string
+     * @throws \Exception
+     */
+    public static function findOrFail(string $path): string
+    {
+        if (!file_exists($path)) {
+            throw new \Exception("no such a directory: $path");
+        }
+        return $path;
+    }
+
+    /**
      * @param string $date
      * @return string
      */
